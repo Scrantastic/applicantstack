@@ -8,7 +8,12 @@ An internal help form for ApplicantStack problems. An employee picks the product
 - `api/ask.js` is a Vercel function. It checks the team password, rebuilds the article excerpts from its own copy (`data/kb.json`, so only Help Center text reaches the prompt), and asks Claude (`claude-opus-5-5`) for a grounded answer.
 - If Claude can't answer, the page still shows the best-matching articles and a link to ApplicantStack support.
 
-## Settings (Vercel > Project > Settings > Environment Variables)
+## Running it
+
+- **Hostinger, or any host that runs `npm start`:** `server.js` serves the page and the `/api/ask` endpoint. Set the entry file to `server.js` if the host asks for one.
+- **Vercel:** deploys `public/` and `api/ask.js` as is (see `vercel.json`).
+
+## Settings (environment variables in your host's dashboard)
 
 | Name | What it is |
 |---|---|

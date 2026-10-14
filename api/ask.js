@@ -108,8 +108,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ result, used: ctx.used });
   } catch (error) {
     if (error instanceof Anthropic.AuthenticationError) {
-      console.error("Anthropic API key missing or invalid");
-      return res.status(500).json({ code: "server_misconfigured" });
+      console.error("Anthropic API key was rejected");
+      return res.status(500).json({ code: "bad_api_key" });
     }
     if (error instanceof Anthropic.RateLimitError) return res.status(429).json({ code: "rate_limited" });
     if (error instanceof Anthropic.APIError) {

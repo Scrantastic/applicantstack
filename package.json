@@ -10,6 +10,7 @@
   },
   "main": "server.js",
   "scripts": {
+    "build": "node -e \"console.log('No build step needed')\"",
     "start": "node server.js"
   }
 }

@@ -1,12 +1,13 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import { timingSafeEqual, createHash } from "node:crypto";
 
 // The Help Center copy ships with the function (see vercel.json includeFiles).
-const KB = new Map(
-  JSON.parse(readFileSync(join(process.cwd(), "data", "kb.json"), "utf8")).map((a) => [a.n, a]),
-);
+const kbPath = [join(process.cwd(), "data", "kb.json"), fileURLToPath(new URL("../data/kb.json", import.meta.url))]
+  .find((p) => existsSync(p));
+const KB = new Map(JSON.parse(readFileSync(kbPath, "utf8")).map((a) => [a.n, a]));
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY from the Vercel environment
 

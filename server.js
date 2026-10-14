@@ -2,13 +2,12 @@
 // Serves public/ and routes POST /api/ask to the same handler Vercel uses.
 import http from "node:http";
 import { readFile } from "node:fs/promises";
-import { join, normalize, extname } from "node:path";
+import { join, normalize, extname, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import "./load-env.js";
+import handler from "./api/ask.js";
 
-// Hostinger writes dashboard environment variables to a .env file instead of the process environment.
-try { process.loadEnvFile(join(process.cwd(), ".env")); } catch {}
-const { default: handler } = await import("./api/ask.js");
-
-const PUBLIC = join(process.cwd(), "public");
+const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "public");
 const TYPES = { ".html": "text/html; charset=utf-8", ".json": "application/json", ".js": "text/javascript", ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".ico": "image/x-icon" };
 const MAX_BODY = 256 * 1024;
 

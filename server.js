@@ -4,7 +4,7 @@ import http from "node:http";
 import { readFile } from "node:fs/promises";
 import { join, normalize, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import "./load-env.js";
+import { envStatus } from "./load-env.js";
 import handler from "./api/ask.js";
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "public");
@@ -32,6 +32,17 @@ async function readJson(req) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
+  if (url.pathname === "/api/health") {
+    // Setup check: reports which settings exist, never their values.
+    return shim(res).status(200).json({
+      node: process.version,
+      cwd: process.cwd(),
+      envFiles: envStatus,
+      hasApiKey: Boolean(process.env.ANTHROPIC_API_KEY),
+      hasPassword: Boolean(process.env.APP_PASSWORD),
+      matchingNames: Object.keys(process.env).filter((k) => /anthropic|api_?key|password/i.test(k)),
+    });
+  }
   if (url.pathname === "/api/ask") {
     if (req.method === "POST") {
       try { req.body = await readJson(req); } catch { return shim(res).status(400).json({ code: "bad_request" }); }

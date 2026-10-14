@@ -5,9 +5,13 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-for (const file of [join(here, ".env"), join(process.cwd(), ".env")]) {
-  if (existsSync(file)) {
-    try { process.loadEnvFile(file); } catch (e) { console.error("Could not read", file, e.message); }
-    break;
+export const envFiles = [...new Set([join(here, ".env"), join(process.cwd(), ".env"), join(here, "..", ".env")])];
+export const envStatus = [];
+for (const file of envFiles) {
+  const found = existsSync(file);
+  let loaded = false;
+  if (found) {
+    try { process.loadEnvFile(file); loaded = true; } catch (e) { console.error("Could not read", file, e.message); }
   }
+  envStatus.push({ file, found, loaded });
 }

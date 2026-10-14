@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ApplicantStack Help Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a two-pane intake desk. Form on the left like a ticket slip, the answer file on the right; stacks on phones. */
+:root{
+  --bg:#f3f4f7; --panel:#ffffff; --ink:#18213a; --muted:#5b6380; --line:#dfe2ea;
+  --accent:#d98a12; --accent-ink:#5a3800; --accent-soft:#fdf1dc;
+  --navy:#24365f; --navy-soft:#e7ebf5;
+  --ok:#1e7a4f; --ok-soft:#e3f3ea; --warn:#a4570a; --warn-soft:#fbecd9; --bad:#b0323a; --bad-soft:#f8e3e4;
+  --f-display:"Familjen Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141f; --panel:#171d2c; --ink:#e8ebf3; --muted:#9aa3bd; --line:#2a3247;
+  --accent:#f0a83a; --accent-ink:#ffe2b0; --accent-soft:#3a2a10;
+  --navy:#a9bbe6; --navy-soft:#1f2940;
+  --ok:#6fd0a0; --ok-soft:#143326; --warn:#f2b26a; --warn-soft:#3a2711; --bad:#f08b91; --bad-soft:#3b1a1d;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141f; --panel:#171d2c; --ink:#e8ebf3; --muted:#9aa3bd; --line:#2a3247;
+  --accent:#f0a83a; --accent-ink:#ffe2b0; --accent-soft:#3a2a10;
+  --navy:#a9bbe6; --navy-soft:#1f2940;
+  --ok:#6fd0a0; --ok-soft:#143326; --warn:#f2b26a; --warn-soft:#3a2711; --bad:#f08b91; --bad-soft:#3b1a1d;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px;padding-block:28px 48px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:22px}
+.brand{display:flex;flex-direction:column;gap:4px}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,3.2vw,34px);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.kbstat{font-family:var(--f-mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--panel);white-space:nowrap}
+.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.slip{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:18px;position:relative}
+.slip::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;border-radius:var(--r) var(--r) 0 0;background:repeating-linear-gradient(90deg,var(--accent) 0 14px,transparent 14px 20px)}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+legend,label.lab{font-family:var(--f-display);font-weight:600;font-size:14px;padding:0;margin-bottom:2px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:-4px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;background:var(--bg);user-select:none}
+.seg input:checked+label{background:var(--navy);border-color:var(--navy);color:var(--panel);font-weight:700}
+.seg input:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
+select,textarea,input[type=text]{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{min-height:120px;resize:vertical}
+select:focus-visible,textarea:focus-visible,input:focus-visible,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.examples{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:12.5px;border:1px dashed var(--line);background:transparent;color:var(--muted);border-radius:6px;padding:4px 9px;cursor:pointer}
+.chip:hover{color:var(--ink);border-color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font-family:var(--f-display);font-weight:600;font-size:15px;border-radius:8px;padding:10px 18px;cursor:pointer;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:#1d1300}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.primary:disabled{opacity:.55;cursor:progress}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.small{font-size:12.5px;color:var(--muted)}
+.file{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);min-width:0;overflow:hidden}
+.filehead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--navy-soft)}
+.filehead h2{font-family:var(--f-display);font-size:17px;margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;padding:3px 8px;border-radius:4px;background:var(--panel);border:1px solid var(--line);color:var(--muted)}
+.filebody{padding:20px;display:flex;flex-direction:column;gap:20px}
+.headline{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.3;margin:0;text-wrap:balance}
+.notice{border-radius:8px;padding:12px 14px;font-size:14px}
+.notice.warn{background:var(--warn-soft);color:var(--ink);border:1px solid var(--warn)}
+.notice.bad{background:var(--bad-soft);border:1px solid var(--bad)}
+.notice.info{background:var(--navy-soft);border:1px solid var(--line)}
+.sec{display:grid;grid-template-columns:118px minmax(0,1fr);gap:4px 18px}
+@media (max-width:520px){.sec{grid-template-columns:minmax(0,1fr)}}
+.sec h3{margin:2px 0 0;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.sec h3 .dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:7px;vertical-align:1px}
+.s-cause .dot{background:var(--navy)} .s-checks .dot{background:var(--accent)} .s-fix .dot{background:var(--ok)} .s-esc .dot{background:var(--bad)}
+.sec ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px}
+.sec li{padding-left:2px}
+.sec ol.bul{list-style:disc}
+.cite{display:block;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.cite a{color:var(--navy);text-decoration-color:var(--line);text-underline-offset:2px;word-break:break-word}
+.cite .num{font-family:var(--f-mono);font-size:11.5px}
+.divider{height:1px;background:var(--line)}
+.arts h3{font-family:var(--f-display);font-size:14px;margin:0 0 8px}
+.arts ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.arts li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--bg)}
+.arts li a{font-weight:700;color:var(--ink);text-decoration:none}
+.arts li a:hover{text-decoration:underline}
+.arts .meta{font-family:var(--f-mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.arts .snip{grid-column:1/-1;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.howto{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.howto{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.howto div{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13px;background:var(--bg)}
+.howto b{display:block;font-family:var(--f-display);font-size:14px;margin-bottom:2px}
+.thinking{display:flex;gap:10px;align-items:center;color:var(--muted)}
+.pulse{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:p 1.2s ease-in-out infinite}
+@keyframes p{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+footer{margin-top:26px;font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 18px}
+footer a,.notice a{color:var(--navy)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+[hidden]{display:none!important}
+body{margin:0}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow">Internal help · ApplicantStack</span>
+      <h1>Stuck in ApplicantStack? <em>Describe it here.</em></h1>
+      <p class="lede">Tell us which product you're in, your role, and what's going wrong. You'll get a likely cause, what to check, how to fix it, and when to contact support, with every step tied to an ApplicantStack Help Center article.</p>
+    </div>
+    <span class="kbstat" id="kbstat">Loading Help Center articles…</span>
+  </header>
+
+  <div class="grid">
+    <form class="slip" id="f" autocomplete="off">
+      <fieldset>
+        <legend>Which product are you in?</legend>
+        <div class="seg" role="radiogroup">
+          <input type="radio" name="product" id="p-recruit" value="Recruit" checked><label for="p-recruit">Recruit (hiring)</label>
+          <input type="radio" name="product" id="p-onboard" value="Onboard"><label for="p-onboard">Onboard (new hires)</label>
+          <input type="radio" name="product" id="p-unsure" value="Not sure"><label for="p-unsure">Not sure</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Your role in ApplicantStack</legend>
+        <div class="seg" role="radiogroup">
+          <input type="radio" name="role" id="r-admin" value="Administrator"><label for="r-admin">Admin</label>
+          <input type="radio" name="role" id="r-rec" value="Recruiter" checked><label for="r-rec">Recruiter</label>
+          <input type="radio" name="role" id="r-hm" value="Hiring Manager"><label for="r-hm">Hiring Manager</label>
+          <input type="radio" name="role" id="r-unsure" value="Not sure"><label for="r-unsure">Not sure</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <label class="lab" for="area">What is it about?</label>
+        <select id="area"></select>
+      </fieldset>
+      <fieldset>
+        <label class="lab" for="desc">What's happening?</label>
+        <p class="hint">Include what you clicked, what you expected, and any message on screen, word for word.</p>
+        <textarea id="desc" placeholder="e.g. Our hiring manager says they can't see any candidates on the Warehouse Associate job, even though 12 people applied."></textarea>
+        <div class="examples" aria-label="Example problems">
+          <button type="button" class="chip" data-ex="0">Manager can't see candidates</button>
+          <button type="button" class="chip" data-ex="1">Candidate didn't get our email</button>
+          <button type="button" class="chip" data-ex="2">Job isn't showing on Indeed</button>
+          <button type="button" class="chip" data-ex="3">New stage doesn't appear</button>
+          <button type="button" class="chip" data-ex="4">Keeps asking me to reset password</button>
+        </div>
+      </fieldset>
+      <fieldset id="pwbox" hidden>
+        <label class="lab" for="pw">Team password</label>
+        <p class="hint">Ask your ApplicantStack admin for it. You only need to enter it once on this device.</p>
+        <input type="password" id="pw" autocomplete="current-password">
+      </fieldset>
+      <div class="actions">
+        <button class="btn primary" id="go" type="submit">Get help</button>
+        <button class="btn ghost" id="stop" type="button" hidden>Stop</button>
+        <span class="small" id="formnote"></span>
+      </div>
+    </form>
+
+    <section class="file" aria-live="polite">
+      <div class="filehead">
+        <h2 id="ftitle">How this works</h2>
+        <div class="tags" id="ftags"></div>
+      </div>
+      <div class="filebody" id="out">
+        <div class="howto">
+          <div><b>Likely cause</b>What usually causes this.</div>
+          <div><b>Checks</b>How to confirm it.</div>
+          <div><b>Fix</b>The steps to resolve it.</div>
+          <div><b>Escalate</b>When to contact support.</div>
+        </div>
+        <p class="small" style="margin:0">Answers only use ApplicantStack's own Help Center articles. If no article covers your problem, you'll be told so and pointed to ApplicantStack support instead of getting a guess.</p>
+        <div class="arts" id="live"></div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <span>Source: ApplicantStack Help Center articles copied 2026-09-23. The live Help Center wins if they disagree.</span>
+    <a href="https://helpas.payrollservers.info/s/contactsupport" target="_blank" rel="noopener">Contact ApplicantStack support</a>
+    <a href="https://helpas.payrollservers.info/s/" target="_blank" rel="noopener">Open the Help Center</a>
+  </footer>
+</div>
+
+<script>
+const SUPPORT="https://helpas.payrollservers.info/s/contactsupport";
+const AREAS=[
+ ["","Pick the closest match",""],
+ ["login","Logging in or passwords","login password reset sign in locked username"],
+ ["email","Emails and notifications","email notification template spam automated trigger merge field delay"],
+ ["post","Posting jobs and job boards","post launch job board indeed monster careerbuilder linkedin sponsored posting"],
+ ["cand","Candidates and applications","candidate application applicant resume upload search apply"],
+ ["work","Workflow, stages and fields","workflow stage field configure status disposition"],
+ ["users","Users, roles and access","user role permission hiring manager access admin login"],
+ ["quest","Questionnaires and forms","questionnaire form question scoring layout template"],
+ ["events","Interviews, events and calendars","event interview schedule calendar google office 365"],
+ ["text","Texting","texting text sms premium compliance"],
+ ["reports","Reports","report export eeoc csv"],
+ ["onboard","New hires and onboarding","hire onboard new hire portal documents sign task"],
+ ["integ","Payroll, HR and partner integrations","integration adp namely payroll hris export background check api"],
+ ["error","Error messages or a page not working","error message browser cache cookies upload file"],
+ ["other","Something else",""]
+];
+const EXAMPLES=[
+ {area:"users",role:"Recruiter",product:"Recruit",d:"Our hiring manager says they can't see any candidates on their job, even though people have applied."},
+ {area:"email",role:"Recruiter",product:"Recruit",d:"A candidate says they never got the automatic email after applying. I can see it was supposed to go out."},
+ {area:"post",role:"Administrator",product:"Recruit",d:"I launched a job two days ago and it still isn't showing up on Indeed."},
+ {area:"work",role:"Administrator",product:"Recruit",d:"I added a new application stage in setup but I don't see it as an option when I change a candidate's stage."},
+ {area:"login",role:"Hiring Manager",product:"Recruit",d:"Every time I log in it keeps prompting me to reset my password again."}
+];
+const $=s=>document.querySelector(s);
+const area=$("#area");
+for(const [v,l] of AREAS){const o=document.createElement("option");o.value=v;o.textContent=l;area.append(o)}
+
+/* ---------- retrieval over the copied Help Center ---------- */
+const STOP=new Set("a an and are as at be been but by can could do does did for from has have how i if in into is it its me my of on or our so than that the their them then there these they this to too was we were what when where which who why will with you your not no yes any all just get got also there's it's i'm".split(" "));
+function stem(w){if(w.length>5&&w.endsWith("ing"))return w.slice(0,-3);if(w.length>4&&w.endsWith("ed"))return w.slice(0,-2);if(w.length>4&&w.endsWith("es"))return w.slice(0,-2);if(w.length>3&&w.endsWith("s")&&!w.endsWith("ss"))return w.slice(0,-1);return w}
+function toks(s){return (s.toLowerCase().match(/[a-z0-9]+/g)||[]).filter(w=>w.length>1&&!STOP.has(w)).map(stem)}
+let KB=[],CH=[],DF=new Map(),AVG=1;
+function index(){
+  KB.forEach((a,ai)=>{
+    a.onboard=/onboard/i.test(a.t+" "+a.g); a.recruit=/recruit/i.test(a.t+" "+a.g)&&!/\(onboard\)/i.test(a.g);
+    a.update=/Product Update/i.test(a.g);
+    const paras=a.b.split(/\n(?=#{1,4} |\*\*[A-Z0-9])/);
+    let buf="",heading="";
+    const push=()=>{if(buf.trim()){const tk=toks(a.t+" "+a.t+" "+buf);CH.push({ai,text:buf.trim(),tk,tf:tf(tk),head:heading})}buf=""};
+    for(const p of paras){
+      const h=p.match(/^#{1,4} (.+)|^\*\*([^*]+)\*\*/);
+      if(buf.length+p.length>1600)push();
+      if(!buf&&h)heading=(h[1]||h[2]||"").trim();
+      buf+=(buf?"\n":"")+p;
+      while(buf.length>2400){const cut=buf.lastIndexOf("\n",1800)>400?buf.lastIndexOf("\n",1800):1800;const rest=buf.slice(cut);buf=buf.slice(0,cut);push();buf=rest}
+    }
+    push();
+  });
+  for(const c of CH)for(const w of c.tf.keys())DF.set(w,(DF.get(w)||0)+1);
+  AVG=CH.reduce((s,c)=>s+c.tk.length,0)/CH.length;
+}
+function tf(tk){const m=new Map();for(const w of tk)m.set(w,(m.get(w)||0)+1);return m}
+function search(q,extra,product,k=8){
+  const qt=[...new Set(toks(q))],et=[...new Set(toks(extra))].filter(w=>!qt.includes(w));
+  if(!qt.length&&!et.length)return[];
+  const N=CH.length,k1=1.3,b=.75;
+  const per=new Map();
+  CH.forEach((c,i)=>{
+    let s=0;
+    const sc=(w,wt)=>{const f=c.tf.get(w);if(!f)return;const df=DF.get(w)||0;const idf=Math.log(1+(N-df+.5)/(df+.5));s+=wt*idf*(f*(k1+1))/(f+k1*(1-b+b*c.tk.length/AVG))};
+    qt.forEach(w=>sc(w,1)); et.forEach(w=>sc(w,.35));
+    if(s<=0)return;
+    const a=KB[c.ai];
+    if(product==="Onboard"){if(a.onboard)s*=1.35;else if(/recruit/i.test(a.t))s*=.75}
+    if(product==="Recruit"){if(/onboard/i.test(a.t+" "+a.g))s*=.7}
+    if(a.update)s*=.8;
+    if(/VIDEO/i.test(a.t)&&a.b.length<900)s*=.6;
+    const e=per.get(c.ai)||{ai:c.ai,best:0,chunks:[]};
+    e.chunks.push({i,s});per.set(c.ai,e);
+  });
+  const arr=[...per.values()].map(e=>{e.chunks.sort((x,y)=>y.s-x.s);
+    const tt=KB[e.ai].tt||(KB[e.ai].tt=new Set(toks(KB[e.ai].t)));
+    let tb=0,hit=0;for(const w of qt)if(tt.has(w)){hit++;const df=DF.get(w)||0;tb+=Math.log(1+(N-df+.5)/(df+.5))}
+    if(hit>=2)tb*=1.5;
+    e.best=e.chunks[0].s+.35*(e.chunks[1]?.s||0)+1.6*tb;return e});
+  arr.sort((x,y)=>y.best-x.best);
+  return arr.slice(0,k);
+}
+function snippet(text,q){
+  const t=text.replace(/\[Screenshot:[^\]]*\]/g,"").replace(/[#*>`_]/g,"").replace(/\s+/g," ").trim();
+  const qs=toks(q);let pos=0;
+  for(const w of qs){const m=t.toLowerCase().indexOf(w);if(m>=0){pos=Math.max(0,m-60);break}}
+  return (pos>0?"…":"")+t.slice(pos,pos+190)+(t.length>pos+190?"…":"");
+}
+function citeEl(a,section){
+  const s=document.createElement("span");s.className="cite";
+  s.append("Source: “"+a.t+"” ");
+  const n=document.createElement("span");n.className="num";n.textContent="(Article #"+a.n+")";s.append(n,", ");
+  const l=document.createElement("a");l.href=a.u;l.target="_blank";l.rel="noopener";l.textContent=a.u;s.append(l);
+  if(section)s.append(", section “"+section+"”");
+  return s;
+}
+function renderArts(el,hits,q,title){
+  el.replaceChildren();
+  if(!hits.length)return;
+  const h=document.createElement("h3");h.textContent=title;el.append(h);
+  const ul=document.createElement("ul");
+  for(const hit of hits){
+    const a=KB[hit.ai];const li=document.createElement("li");
+    const l=document.createElement("a");l.href=a.u;l.target="_blank";l.rel="noopener";l.textContent=a.t;
+    const m=document.createElement("span");m.className="meta";m.textContent="#"+a.n;
+    const sn=document.createElement("span");sn.className="snip";sn.textContent=snippet(CH[hit.chunks[0].i].text,q);
+    li.append(l,m,sn);ul.append(li);
+  }
+  el.append(ul);
+}
+
+/* ---------- form state ---------- */
+const val=n=>document.querySelector(`input[name=${n}]:checked`)?.value;
+function areaInfo(){return AREAS.find(a=>a[0]===area.value)||AREAS[0]}
+let liveT;
+function live(){
+  clearTimeout(liveT);
+  liveT=setTimeout(()=>{
+    const el=$("#live");if(!el||!KB.length)return;
+    const d=$("#desc").value.trim();
+    const hits=search(d,areaInfo()[2],val("product"),5);
+    renderArts(el,hits,d,d?"Articles that look related so far":"Popular starting points");
+  },180);
+}
+["input","change"].forEach(ev=>$("#f").addEventListener(ev,e=>{if(e.target.id!=="go")live()}));
+document.querySelectorAll("[data-ex]").forEach(b=>b.addEventListener("click",()=>{
+  const ex=EXAMPLES[+b.dataset.ex];$("#desc").value=ex.d;area.value=ex.area;
+  document.querySelector(`input[name=product][value="${ex.product}"]`).checked=true;
+  document.querySelector(`input[name=role][value="${ex.role}"]`).checked=true;
+  try{localStorage.setItem("as-draft",JSON.stringify(ex))}catch(e){}
+  live();$("#desc").focus();
+}));
+try{const dr=JSON.parse(localStorage.getItem("as-draft")||"null");if(dr&&dr.d){$("#desc").value=dr.d;area.value=dr.area||"";const p=document.querySelector(`input[name=product][value="${dr.product}"]`);if(p)p.checked=true;const r=document.querySelector(`input[name=role][value="${dr.role}"]`);if(r)r.checked=true}}catch(e){}
+$("#desc").addEventListener("input",()=>{try{localStorage.setItem("as-draft",JSON.stringify({d:$("#desc").value,area:area.value,product:val("product"),role:val("role")}))}catch(e){}});
+
+/* ---------- ask Claude, grounded in the retrieved articles ---------- */
+let ctl=null;
+let PW="";try{PW=localStorage.getItem("as-pw")||""}catch(e){}
+if(!PW)$("#pwbox").hidden=false;
+function excerptsFor(h){
+  const a=KB[h.ai];
+  if(a.b.length<=6000)return [];
+  return h.chunks.slice(0,3).sort((x,y)=>x.i-y.i).map(c=>CH[c.i].text);
+}
+async function ask(form,hits,signal){
+  const used=hits.slice(0,6);
+  const r=await fetch("/api/ask",{method:"POST",signal,headers:{"content-type":"application/json","x-app-password":PW},
+    body:JSON.stringify({form,articles:used.map(h=>({n:KB[h.ai].n,excerpts:excerptsFor(h)}))})});
+  let data={};try{data=await r.json()}catch(e){}
+  if(!r.ok||data.code)throw {code:data.code||"upstream_error",status:r.status};
+  return data;
+}
+function sec(cls,label,items,used,ordered){
+  const byNum=new Map(used.map(a=>[a.n,a]));
+  const keep=(items||[]).map(it=>{
+    if(typeof it==="string")it={text:it,sources:[]};
+    const src=(Array.isArray(it.sources)?it.sources:[]).map(s=>String(s).replace(/[^0-9]/g,"").padStart(9,"0")).filter(n=>byNum.has(n));
+    return {text:String(it.text||"").trim(),src,section:it.section?String(it.section):""};
+  }).filter(it=>it.text&&(it.src.length||cls==="s-esc"));
+  if(!keep.length)return null;
+  const d=document.createElement("div");d.className="sec "+cls;
+  const h=document.createElement("h3");const dot=document.createElement("span");dot.className="dot";h.append(dot,label);
+  const ol=document.createElement("ol");if(!ordered)ol.className="bul";
+  for(const it of keep){
+    const li=document.createElement("li");li.append(it.text);
+    it.src.forEach((n,i)=>li.append(citeEl(byNum.get(n),i===0?it.section:"")));
+    ol.append(li);
+  }
+  d.append(h,ol);return {el:d,items:keep,label};
+}
+function setHead(title,tags){
+  $("#ftitle").textContent=title;const t=$("#ftags");t.replaceChildren();
+  for(const x of tags){if(!x)continue;const s=document.createElement("span");s.className="tag";s.textContent=x;t.append(s)}
+}
+function supportNotice(text){
+  const n=document.createElement("div");n.className="notice warn";
+  n.append(text+" ");const a=document.createElement("a");a.href=SUPPORT;a.target="_blank";a.rel="noopener";a.textContent="Contact ApplicantStack support";n.append(a,".");
+  return n;
+}
+function copyText(form,res){
+  let s=`ApplicantStack issue\nProduct: ${form.product}\nRole: ${form.role}\nArea: ${form.area}\nDescription: ${form.desc}\n\n${res.headline||""}\n`;
+  for(const blk of res.blocks){s+=`\n${blk.label.toUpperCase()}\n`;blk.items.forEach((it,i)=>{s+=`${i+1}. ${it.text}\n`;it.src.forEach(n=>{const a=KB.find(k=>k.n===n);if(a)s+=`   Source: "${a.t}" (Article #${a.n}), ${a.u}\n`})})}
+  return s;
+}
+
+$("#f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const desc=$("#desc").value.trim();
+  if(desc.length<8){$("#formnote").textContent="Add a sentence about what's going wrong first.";$("#desc").focus();return}
+  if(!KB.length){$("#formnote").textContent="Articles are still loading. Try again in a moment.";return}
+  const typed=$("#pw").value.trim();
+  if(typed){PW=typed;try{localStorage.setItem("as-pw",PW)}catch(e){}}
+  $("#formnote").textContent="";
+  const form={product:val("product"),role:val("role"),area:area.value?areaInfo()[1]:"Not specified",desc};
+  const hits=search(desc,areaInfo()[2],form.product,8);
+  const out=$("#out");out.replaceChildren();
+  setHead("Your answer",[form.product,form.role,area.value?areaInfo()[1]:""]);
+  const arts=document.createElement("div");arts.className="arts";
+  if(!hits.length){
+    out.append(supportNotice("No Help Center article matches this description. Try different words (button names or the exact error text help), or contact support."));
+    return;
+  }
+  const nUsed=Math.min(6,hits.length);
+  const th=document.createElement("div");th.className="thinking";const p=document.createElement("span");p.className="pulse";th.append(p,"Reading "+nUsed+" Help Center articles and working out the cause…");
+  out.append(th);
+  $("#go").disabled=true;$("#stop").hidden=false;
+  ctl=new AbortController();
+  try{
+    const data=await ask(form,hits,ctl.signal);
+    const res=data.result;
+    const ctx={used:(data.used||[]).map(n=>KB.find(k=>k.n===n)).filter(Boolean)};
+    th.remove();
+    if(!res||typeof res!=="object")throw {code:"invalid_json"};
+    const blocks=[sec("s-cause","Likely cause",res.cause,ctx.used,false),sec("s-checks","Checks",res.checks,ctx.used,true),sec("s-fix","Fix",res.fix,ctx.used,true),sec("s-esc","Escalate",res.escalate,ctx.used,false)].filter(Boolean);
+    const grounded=blocks.some(b=>b.label!=="Escalate");
+    const h=document.createElement("p");h.className="headline";h.textContent=String(res.headline||"");
+    if(!res.covered||!grounded){
+      if(res.headline)out.append(h);
+      out.append(supportNotice("The Help Center articles don't cover this problem, so there's no grounded answer to give."));
+      arts.className="arts";out.append(arts);renderArts(arts,hits.slice(0,4),desc,"Closest articles, in case one helps");
+      return;
+    }
+    out.append(h);
+    if(res.note){const n=document.createElement("div");n.className="notice info";n.textContent=String(res.note);out.append(n)}
+    blocks.forEach(b=>out.append(b.el));
+    out.append(supportNotice("Still stuck after these steps?"));
+    const act=document.createElement("div");act.className="actions";
+    const cp=document.createElement("button");cp.type="button";cp.className="btn ghost";cp.textContent="Copy for a support ticket";
+    const msg=document.createElement("span");msg.className="small";
+    const txt=copyText(form,{headline:res.headline,blocks});
+    cp.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(txt);msg.textContent="Copied."}catch(err){const ta=document.createElement("textarea");ta.value=txt;ta.rows=8;ta.setAttribute("aria-label","Answer text to copy");act.after(ta);ta.select();msg.textContent="Select and copy the text below."}});
+    act.append(cp,msg);out.append(act);
+    const dv=document.createElement("div");dv.className="divider";out.append(dv,arts);
+    renderArts(arts,ctx.used.map(a=>hits.find(x=>KB[x.ai]===a)),desc,"Articles this answer was built from");
+  }catch(err){
+    th.remove();
+    const code=err&&(err.name==="AbortError"?"cancelled":err.code);
+    if(code==="bad_password"){PW="";try{localStorage.removeItem("as-pw")}catch(e){}$("#pwbox").hidden=false;$("#pw").value="";$("#pw").focus();
+      const n=document.createElement("div");n.className="notice bad";n.textContent="That team password didn't work. Enter it above and press Get help again. Meanwhile, here are the best-matching articles.";out.append(n,arts);renderArts(arts,hits.slice(0,6),desc,"Best-matching articles");}
+    else if(code==="cancelled"){const n=document.createElement("div");n.className="notice info";n.textContent="Stopped. Here are the matching articles instead.";out.append(n,arts);renderArts(arts,hits.slice(0,6),desc,"Best-matching articles");}
+    else{
+      const n=document.createElement("div");n.className="notice bad";
+      n.textContent=code==="rate_limited"?"Too many requests right now. Wait a minute and press Get help again. Meanwhile, here are the best-matching articles.":code==="refused"?"A guided answer isn't available for this description. Here are the best-matching articles.":code==="server_misconfigured"?"The help desk isn't set up correctly yet (missing API key). Tell your ApplicantStack admin. Meanwhile, here are the best-matching articles.":"The guided answer didn't come through. Press Get help to try again, or start with these articles.";
+      out.append(n,arts);renderArts(arts,hits.slice(0,6),desc,"Best-matching articles");
+    }
+  }finally{$("#go").disabled=false;$("#stop").hidden=true;ctl=null}
+});
+$("#stop").addEventListener("click",()=>ctl?.abort());
+
+fetch("/kb.json").then(r=>r.json()).then(d=>{KB=d;index();$("#kbstat").textContent=KB.length+" Help Center articles loaded";live()}).catch(()=>{$("#kbstat").textContent="Articles failed to load";$("#formnote").textContent="The Help Center articles didn't load. Reload the page, or use the Help Center link below."});
+</script>
+</body>
+</html>
